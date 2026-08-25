@@ -25,7 +25,7 @@ const parseColor = (value) => {
 };
 
 export const config = Object.freeze({
-  token: required('MTU0MTUzOTg1NTQyMTUzODMxNA.GpZbrw.okVslb1ohWbfyTaib9swltFiahmstKLzUE-E8s'),
+  token: required('MTU0MTUzOTg1NTQyMTUzODMxNA.Gtdp_4.fWgaSwTFlDROPwnb4MKhodrNxwkEthRQVIJLr0'),
   guildId: required('915282609259577424'),
 
   logChannelId: optional('1541579327131623436'),
