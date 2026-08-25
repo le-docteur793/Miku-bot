@@ -1,6 +1,7 @@
 {
-  "name": "Miku Bot",
+  "name": "miku-bot",
   "version": "1.0.0",
+  "description": "Bot Discord Miku",
   "private": true,
   "type": "module",
   "main": "index.js",
