@@ -20,4 +20,5 @@
     "ffmpeg-static": "^5.3.0",
     "opusscript": "^0.1.1"
   }
-}
+}cd "C:\Users\axelh\Documents\GitHub\Miku-bot"
+npm install
