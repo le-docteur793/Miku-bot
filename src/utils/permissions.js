@@ -1,4 +1,4 @@
-import { PermissionFlagsBits } from 'discord.js';
+import { PermissionFlagsBits } from '../discord.js';
 
 export function isStaff(member, config) {
   if (!member) return false;
@@ -11,9 +11,14 @@ export function isStaff(member, config) {
     return true;
   }
 
-  return Boolean(
-    config.staffRoleId &&
-    member.roles.cache.has(config.staffRoleId),
+  const staffRoleIds = config.staffRoleIds?.length
+    ? config.staffRoleIds
+    : config.staffRoleId
+      ? [config.staffRoleId]
+      : [];
+
+  return staffRoleIds.some((roleId) =>
+    member.roles.cache.has(roleId),
   );
 }
 

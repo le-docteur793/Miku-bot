@@ -4,7 +4,7 @@ import {
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
-} from 'discord.js';
+} from '../discord.js';
 
 const parseColor = (value, fallback) => {
   if (!value) return fallback;

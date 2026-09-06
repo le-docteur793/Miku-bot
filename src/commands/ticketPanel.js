@@ -7,7 +7,7 @@ import {
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
-} from 'discord.js';
+} from '../discord.js';
 
 export const ticketPanelCommand = {
   data: new SlashCommandBuilder()
@@ -30,13 +30,21 @@ export const ticketPanelCommand = {
     ),
 
   async execute(interaction, { config }) {
+    if (!config.modules.tickets) {
+      return interaction.reply({
+        content:
+          '❌ Le module Tickets est désactivé dans /configuration.',
+        flags: MessageFlags.Ephemeral,
+      });
+    }
+
     if (
       !config.ticketCategoryId ||
-      !config.staffRoleId
+      !config.staffRoleIds.length
     ) {
       return interaction.reply({
         content:
-          '❌ Configure TICKET_CATEGORY_ID et STAFF_ROLE_ID dans le fichier .env.',
+          '❌ Configure la catégorie des tickets et les rôles du staff avec /configuration.',
         flags: MessageFlags.Ephemeral,
       });
     }

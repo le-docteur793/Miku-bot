@@ -7,7 +7,7 @@ import {
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
-} from 'discord.js';
+} from '../discord.js';
 
 export const applicationPanelCommand = {
   data: new SlashCommandBuilder()
@@ -30,13 +30,21 @@ export const applicationPanelCommand = {
     ),
 
   async execute(interaction, { config }) {
+    if (!config.modules.applications) {
+      return interaction.reply({
+        content:
+          '❌ Le module Candidatures est désactivé dans /configuration.',
+        flags: MessageFlags.Ephemeral,
+      });
+    }
+
     if (
       !config.applicationChannelId ||
-      !config.staffRoleId
+      !config.staffRoleIds.length
     ) {
       return interaction.reply({
         content:
-          '❌ Configure APPLICATION_CHANNEL_ID et STAFF_ROLE_ID dans le fichier .env.',
+          '❌ Configure le salon des candidatures et les rôles du staff avec /configuration.',
         flags: MessageFlags.Ephemeral,
       });
     }

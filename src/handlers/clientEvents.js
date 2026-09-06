@@ -1,7 +1,7 @@
 import {
   EmbedBuilder,
   Events,
-} from 'discord.js';
+} from '../discord.js';
 
 import {
   sendLog,
@@ -32,13 +32,18 @@ async function getTextChannel(
 
 export function registerClientEvents(
   client,
-  { config },
+  { getGuildConfig },
 ) {
   client.on(
     Events.GuildMemberAdd,
     async (member) => {
       try {
-        if (config.memberRoleId) {
+        const config = await getGuildConfig(member.guild.id);
+
+        if (
+          config.modules.autoRole &&
+          config.memberRoleId
+        ) {
           const role =
             await member.guild.roles
               .fetch(config.memberRoleId)
@@ -58,11 +63,12 @@ export function registerClientEvents(
           }
         }
 
-        const welcomeChannel =
-          await getTextChannel(
-            member.guild,
-            config.welcomeChannelId,
-          );
+        const welcomeChannel = config.modules.welcome
+          ? await getTextChannel(
+              member.guild,
+              config.welcomeChannelId,
+            )
+          : null;
 
         if (welcomeChannel) {
           const welcomeEmbed =
@@ -141,6 +147,8 @@ export function registerClientEvents(
   client.on(
     Events.GuildMemberRemove,
     async (member) => {
+      const config = await getGuildConfig(member.guild.id);
+
       const embed =
         new EmbedBuilder()
           .setColor(0xe74c3c)
@@ -181,6 +189,8 @@ export function registerClientEvents(
       oldMember,
       newMember,
     ) => {
+      const config = await getGuildConfig(newMember.guild.id);
+
       const added =
         newMember.roles.cache.filter(
           (role) =>
@@ -270,6 +280,8 @@ export function registerClientEvents(
         return;
       }
 
+      const config = await getGuildConfig(message.guild.id);
+
       const embed =
         new EmbedBuilder()
           .setColor(0xe67e22)
@@ -331,6 +343,8 @@ export function registerClientEvents(
         return;
       }
 
+      const config = await getGuildConfig(newMessage.guild.id);
+
       const embed =
         new EmbedBuilder()
           .setColor(0xf1c40f)
@@ -390,6 +404,8 @@ export function registerClientEvents(
   client.on(
     Events.GuildBanAdd,
     async (ban) => {
+      const config = await getGuildConfig(ban.guild.id);
+
       const embed =
         new EmbedBuilder()
           .setColor(0xe74c3c)
@@ -427,6 +443,8 @@ export function registerClientEvents(
   client.on(
     Events.GuildBanRemove,
     async (ban) => {
+      const config = await getGuildConfig(ban.guild.id);
+
       const embed =
         new EmbedBuilder()
           .setColor(0x2ecc71)

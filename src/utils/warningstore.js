@@ -5,7 +5,6 @@ import {
   rename,
   writeFile,
 } from 'node:fs/promises';
-
 import path from 'node:path';
 
 const dataDirectory = path.join(
@@ -18,6 +17,8 @@ const warningsFile = path.join(
   'warnings.json',
 );
 
+let mutationQueue = Promise.resolve();
+
 async function readWarnings() {
   await mkdir(dataDirectory, {
     recursive: true,
@@ -29,10 +30,10 @@ async function readWarnings() {
       'utf8',
     );
 
-    const warnings = JSON.parse(content);
+    const parsed = JSON.parse(content);
 
-    return Array.isArray(warnings)
-      ? warnings
+    return Array.isArray(parsed)
+      ? parsed
       : [];
   } catch (error) {
     if (error.code === 'ENOENT') {
@@ -63,27 +64,39 @@ async function writeWarnings(warnings) {
   );
 }
 
-export async function addWarning({
+function mutate(operation) {
+  const result = mutationQueue.then(operation);
+
+  mutationQueue = result.catch(
+    () => undefined,
+  );
+
+  return result;
+}
+
+export function addWarning({
   guildId,
   userId,
   moderatorId,
   reason,
 }) {
-  const warnings = await readWarnings();
+  return mutate(async () => {
+    const warnings = await readWarnings();
 
-  const warning = {
-    id: randomUUID(),
-    guildId,
-    userId,
-    moderatorId,
-    reason,
-    createdAt: new Date().toISOString(),
-  };
+    const warning = {
+      id: randomUUID(),
+      guildId,
+      userId,
+      moderatorId,
+      reason,
+      createdAt: new Date().toISOString(),
+    };
 
-  warnings.push(warning);
-  await writeWarnings(warnings);
+    warnings.push(warning);
+    await writeWarnings(warnings);
 
-  return warning;
+    return warning;
+  });
 }
 
 export async function listWarnings(
@@ -99,24 +112,26 @@ export async function listWarnings(
   );
 }
 
-export async function clearWarnings(
+export function clearWarnings(
   guildId,
   userId,
 ) {
-  const warnings = await readWarnings();
+  return mutate(async () => {
+    const warnings = await readWarnings();
 
-  const remaining = warnings.filter(
-    (warning) =>
-      !(
-        warning.guildId === guildId &&
-        warning.userId === userId
-      ),
-  );
+    const remaining = warnings.filter(
+      (warning) =>
+        !(
+          warning.guildId === guildId &&
+          warning.userId === userId
+        ),
+    );
 
-  const removed =
-    warnings.length - remaining.length;
+    const removed =
+      warnings.length - remaining.length;
 
-  await writeWarnings(remaining);
+    await writeWarnings(remaining);
 
-  return removed;
+    return removed;
+  });
 }

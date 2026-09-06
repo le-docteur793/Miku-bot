@@ -1,5 +1,11 @@
 export async function sendLog(guild, config, payload) {
-  if (!guild || !config.logChannelId) return null;
+  if (
+    !guild ||
+    !config.logChannelId ||
+    config.modules?.logs === false
+  ) {
+    return null;
+  }
 
   const channel = await guild.channels
     .fetch(config.logChannelId)

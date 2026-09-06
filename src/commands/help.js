@@ -1,7 +1,7 @@
 import {
   EmbedBuilder,
   SlashCommandBuilder,
-} from 'discord.js';
+} from '../discord.js';
 
 export const helpCommand = {
   data: new SlashCommandBuilder()
@@ -11,30 +11,56 @@ export const helpCommand = {
     ),
 
   async execute(interaction, { config }) {
+    const fields = [];
+
+    if (config.modules.moderation) {
+      fields.push({
+        name: '🛡️ Modération',
+        value:
+          '/clear · /kick · /ban · ' +
+          '/timeout · /avertissement',
+      });
+    }
+
+    const communityCommands = [];
+
+    if (config.modules.tickets) {
+      communityCommands.push('/panneau-ticket');
+    }
+
+    if (config.modules.applications) {
+      communityCommands.push('/panneau-candidature');
+    }
+
+    if (config.modules.rolePanels) {
+      communityCommands.push('/panneau-role');
+    }
+
+    if (communityCommands.length) {
+      fields.push({
+        name: '🎫 Communauté',
+        value: communityCommands.join(' · '),
+      });
+    }
+
+    if (config.modules.announcements) {
+      fields.push({
+        name: '📢 Communication',
+        value: '/annonce',
+      });
+    }
+
+    fields.push({
+      name: '⚙️ Administration',
+      value: '/configuration',
+    });
+
     const embed = new EmbedBuilder()
       .setColor(config.embedColor)
       .setTitle(
         `🤖 Commandes de ${config.brandName}`,
       )
-      .addFields(
-        {
-          name: '🛡️ Modération',
-          value:
-            '/clear · /kick · /ban · ' +
-            '/timeout · /avertissement',
-        },
-        {
-          name: '🎫 Communauté',
-          value:
-            '/panneau-ticket · ' +
-            '/panneau-candidature · ' +
-            '/panneau-role',
-        },
-        {
-          name: '📢 Communication',
-          value: '/annonce',
-        },
-      )
+      .addFields(fields)
       .setFooter({
         text:
           'Les commandes administratives apparaissent selon tes permissions.',

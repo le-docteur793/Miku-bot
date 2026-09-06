@@ -1,4 +1,4 @@
-import { MessageFlags } from 'discord.js';
+import { MessageFlags } from '../discord.js';
 
 export const truncate = (text, maximum = 1000) => {
   const value = String(text ?? '');

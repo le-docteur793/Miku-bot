@@ -3,13 +3,13 @@ import {
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
-} from 'discord.js';
+} from '../discord.js';
 
 import {
   addWarning,
   clearWarnings,
   listWarnings,
-} from '../utils/warningsStore.js';
+} from '../utils/warningstore.js';
 
 import { sendLog } from '../utils/logger.js';
 import { truncate } from '../utils/replies.js';

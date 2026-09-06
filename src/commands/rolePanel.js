@@ -7,7 +7,7 @@ import {
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
-} from 'discord.js';
+} from '../discord.js';
 
 import {
   canManageRole,

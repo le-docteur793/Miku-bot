@@ -1,18 +1,19 @@
 {
   "name": "miku-bot",
-  "version": "1.0.0",
-  "description": "Bot Discord Miku",
+  "version": "2.0.0",
+  "description": "Bot Discord officiel de Shadow Nova",
   "private": true,
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "check": "node --check index.js"
   },
   "engines": {
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "discord.js": "^14.27.0",
-    "dotenv": "^17.4.2"
+    "discord.js": "14.27.0",
+    "dotenv": "17.4.2"
   }
 }
