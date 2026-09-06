@@ -1,5 +1,4 @@
 import 'dotenv/config';
-import ffmpegPath from 'ffmpeg-static';
 
 import {
   Client,
@@ -9,18 +8,10 @@ import {
   Partials,
 } from 'discord.js';
 
-import { Player } from 'discord-player';
-import { DefaultExtractors } from '@discord-player/extractor';
-
 import { config } from './src/config.js';
 import { commands } from './src/commands/index.js';
 import { registerClientEvents } from './src/handlers/clientEvents.js';
 import { handleInteraction } from './src/handlers/interactions.js';
-import { registerPlayerEvents } from './src/handlers/playerEvents.js';
-
-if (ffmpegPath && !process.env.FFMPEG_PATH) {
-  process.env.FFMPEG_PATH = ffmpegPath;
-}
 
 const client = new Client({
   intents: [
@@ -28,7 +19,6 @@ const client = new Client({
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildVoiceStates,
     GatewayIntentBits.GuildModeration,
   ],
 
@@ -40,53 +30,78 @@ const client = new Client({
 });
 
 client.commands = new Collection(
-  commands.map((command) => [command.data.name, command]),
+  commands.map((command) => [
+    command.data.name,
+    command,
+  ]),
 );
-
-const player = new Player(client);
-
-await player.extractors.loadMulti(DefaultExtractors);
 
 const context = {
   client,
-  player,
   config,
 };
 
 registerClientEvents(client, context);
-registerPlayerEvents(player, context);
 
-client.on(Events.InteractionCreate, (interaction) => {
-  void handleInteraction(interaction, context);
-});
-
-client.once(Events.ClientReady, async (readyClient) => {
-  console.log(`[PRÊT] ${readyClient.user.tag} est connecté.`);
-
-  try {
-    const guild = await readyClient.guilds.fetch(config.guildId);
-
-    await guild.commands.set(
-      commands.map((command) => command.data.toJSON()),
+client.on(
+  Events.InteractionCreate,
+  (interaction) => {
+    void handleInteraction(
+      interaction,
+      context,
     );
+  },
+);
 
+client.once(
+  Events.ClientReady,
+  async (readyClient) => {
     console.log(
-      `[COMMANDES] ${commands.length} commandes installées sur ${guild.name}.`,
+      `[PRÊT] ${readyClient.user.tag} est connecté.`,
     );
-  } catch (error) {
+
+    try {
+      const guild =
+        await readyClient.guilds.fetch(
+          config.guildId,
+        );
+
+      await guild.commands.set(
+        commands.map((command) =>
+          command.data.toJSON(),
+        ),
+      );
+
+      console.log(
+        `[COMMANDES] ${commands.length} commandes installées sur ${guild.name}.`,
+      );
+    } catch (error) {
+      console.error(
+        '[COMMANDES] Impossible d’installer les commandes :',
+        error,
+      );
+    }
+  },
+);
+
+process.on(
+  'unhandledRejection',
+  (error) => {
     console.error(
-      '[COMMANDES] Impossible d’installer les commandes :',
+      '[ERREUR] Promesse non gérée :',
       error,
     );
-  }
-});
+  },
+);
 
-process.on('unhandledRejection', (error) => {
-  console.error('[ERREUR] Promesse non gérée :', error);
-});
-
-process.on('uncaughtException', (error) => {
-  console.error('[ERREUR] Exception non gérée :', error);
-});
+process.on(
+  'uncaughtException',
+  (error) => {
+    console.error(
+      '[ERREUR] Exception non gérée :',
+      error,
+    );
+  },
+);
 
 await client.login(config.token);

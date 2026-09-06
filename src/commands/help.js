@@ -34,12 +34,6 @@ export const helpCommand = {
           name: '📢 Communication',
           value: '/annonce',
         },
-        {
-          name: '🎵 Musique',
-          value:
-            '/musique lire · pause · reprendre · ' +
-            'passer · arreter · file · volume',
-        },
       )
       .setFooter({
         text:

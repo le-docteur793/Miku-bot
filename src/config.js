@@ -15,7 +15,8 @@ const optional = (name) => {
 };
 
 const parseColor = (value) => {
-  const normalized = (value || '6D5DFC').replace('#', '');
+  const normalized =
+    (value || '6D5DFC').replace('#', '');
 
   if (/^[0-9A-Fa-f]{6}$/.test(normalized)) {
     return Number.parseInt(normalized, 16);
@@ -25,16 +26,18 @@ const parseColor = (value) => {
 };
 
 export const config = Object.freeze({
-  token: required('MTU0MTUzOTg1NTQyMTUzODMxNA.Gtdp_4.fWgaSwTFlDROPwnb4MKhodrNxwkEthRQVIJLr0'),
-  guildId: required('915282609259577424'),
+  token: required('DISCORD_TOKEN'),
+  guildId: required('GUILD_ID'),
 
-  logChannelId: optional('1541579327131623436'),
-  welcomeChannelId: optional('1541579459340009553'),
-  memberRoleId: optional('1512174301229482015'),
-  ticketCategoryId: optional('1144952614975443028'),
-  staffRoleId: optional('1539622966571044874', '1539622914104762489', '1125543345033318541', '1125544884678426774', '1539622644326867067', '1144949401559781398', '1144945610244505650'),
-  applicationChannelId: optional('1541581547227058256'),
+  logChannelId: optional('LOG_CHANNEL_ID'),
+  welcomeChannelId: optional('WELCOME_CHANNEL_ID'),
+  memberRoleId: optional('MEMBER_ROLE_ID'),
+  ticketCategoryId: optional('TICKET_CATEGORY_ID'),
+  staffRoleId: optional('STAFF_ROLE_ID'),
+  applicationChannelId: optional('APPLICATION_CHANNEL_ID'),
 
-  brandName: optional('BOT_NAME') || 'Miku bot',
-  embedColor: parseColor(optional('EMBED_COLOR')),
+  brandName: optional('BOT_NAME') || 'Shadow Nova',
+  embedColor: parseColor(
+    optional('EMBED_COLOR'),
+  ),
 });
